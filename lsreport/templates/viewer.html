@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <!-- iOS meta tags -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="stylesheet" type="text/css" href="{{url for static('static', filename='css/papaya.min.css') }}" />
+    <script type="text/javascript" src="{{url_for_static('static', filename='papaya.min.js') }}"></script>
+    <title>Papaya Viewer</title>
+    <script type="text/javascript">
+        var params = [];
+    </script>
+</head>
+
+<body>
+    <div class="papaya" data-params="params"></div>
+</body>
+</html>
