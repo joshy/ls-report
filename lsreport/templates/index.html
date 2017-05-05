@@ -7,6 +7,9 @@
 <body class="w-100">
   {% include 'partials/header.html' %}
   <div id="container" class="bt b--black-10">
+      {% for p in patients %}
+      <div>p</div>
+      {% endfor %}
   </div>
   {% assets "js_all" %}
     <script type="text/javascript" src="{{ ASSET_URL }}"></script>

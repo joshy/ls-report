@@ -4,3 +4,4 @@ jsmin==2.2.1
 requests==2.13.0
 pandas==0.19.2
 nibabel==2.1.0
+numpy=1.12.0

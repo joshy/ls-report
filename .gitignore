@@ -89,4 +89,6 @@ ENV/
 .ropeproject
 
 # annotated scans are ignored
-npz
+image_data
+
+.idea
