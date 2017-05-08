@@ -8,10 +8,11 @@ $(function() {
 
     if($('body').is('.viewer')){
         image = 'static/image_data/nifti/' + get('image')
-        mask = get('mask')
+        mask = 'static/image_data/nifti/' + get('mask')
         console.log('loading papaya')
         papaya.Container.startPapaya();
         papayaContainers[0].viewer.resetViewer();
         papayaContainers[0].viewer.loadBaseImage([image], true)
+        papayaContainers[0].viewer.loadOverlay([mask], true)
     };
 });
