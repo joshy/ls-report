@@ -7,12 +7,14 @@ $(function() {
     }
 
     if($('body').is('.viewer')){
-        image = 'static/image_data/nifti/' + get('image')
-        mask = 'static/image_data/nifti/' + get('mask')
         console.log('loading papaya')
         papaya.Container.startPapaya();
         papayaContainers[0].viewer.resetViewer();
+
+        image = 'static/image_data/nifti/' + get('image')
         papayaContainers[0].viewer.loadBaseImage([image], true)
+
+        mask = 'static/image_data/nifti/' + get('mask')
         papayaContainers[0].viewer.loadOverlay([mask], true)
     };
 });

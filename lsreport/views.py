@@ -1,8 +1,6 @@
-import json
 import logging
 
-from requests import get
-from flask import render_template, request, jsonify, send_file
+from flask import render_template
 
 from lsreport.app import app, VERSION
 from lsreport.read_npz import read
