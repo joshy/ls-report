@@ -1,20 +1,15 @@
-import io
 import os
 import logging
+import glob
 
-from glob import glob
+
+def read_nifti():
+    logging.debug('reading in reports')
+    image_files = os.path.join(os.getcwd(), 'lsreport', 'static', 'image_data', 'nifti', '**', 'IMG*.nii.gz')
+    mask_files = os.path.join(os.getcwd(), 'lsreport', 'static', 'image_data', 'nifti', '**', 'MASK*.nii.gz')
+    return [(os.path.basename(i), os.path.basename(m))
+            for i, m in zip(glob.glob(image_files, recursive=True),
+                            glob.glob(mask_files, recursive=True))]
 
 
-def read_nifti(filename):
-    """ Read and return content of file. """
-    logging.debug('reading in nifti file with id {}'.format(filename))
-    nifti_file = glob('**/' + filename + '*.*', recursive=True)
-    if nifti_file:
-        with open(nifti_file[0], mode='rb') as image_file:
-            #data = image_file.read()
-
-            return io.BytesIO(image_file.read())
-    else:
-        print('not found')
-        return None
 

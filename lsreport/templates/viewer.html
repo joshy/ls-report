@@ -8,14 +8,31 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/papaya.min.css') }}" />
-    <script type="text/javascript" src="{{url_for('static', filename='js/papaya.min.js') }}"></script>
     <title>Papaya Viewer</title>
     <script type="text/javascript">
         var params = [];
+        params["worldSpace"] = false
+        params["ctDataRef"] = {"min": 40-200, "max": 40+200, "lut": "Grayscale"}
+        params["ctDataRef"] = {"min": -1200, "max": 0, "lut": "Grayscale"}
+        params["petDataRef"] = {"min": 0.3, "max": 5, "lut": "Gold", "alpha": 0.4}
+        params["labDataRef"] = {"min": 0.1, "max": 200, "lut": "Blue Overlay", "alpha": 0.8}
+        params["kioskMode"] = false
+        params["orthogonalTall"] = false
+        params["canOpenInMango"] = true
+        params["expandable"] = true
+        params["showRuler"] = false
+        params["showOrientation"] = true
+        params["showEULA"] = false
+        params["radiological"] = false
+        params["mainView"] = "coronal"
     </script>
 </head>
 
-<body>
+<body class="viewer">
     <div class="papaya" data-params="params"></div>
+    {% assets "js_all" %}
+    <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+  {% endassets %}
 </body>
+
 </html>

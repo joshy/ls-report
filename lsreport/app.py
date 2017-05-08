@@ -10,7 +10,7 @@ VERSION = app.config['VERSION'] = '0.0.1'
 
 # JS Assets part
 assets = Environment(app)
-js = Bundle("js/script.js",
+js = Bundle("js/jquery-3.2.1.min.js", "js/papaya.min.js", "js/script.js",
             filters='jsmin', output='gen/packed.js')
 assets.register('js_all', js)
 

@@ -26,10 +26,11 @@ def read():
 def parse(npz_file):
     print('parsing', npz_file)
     with np.load(npz_file) as np_file:
+        print(np_file.keys())
         label_img = np_file['Labels']
         ct_img = np_file['CT']
         pet_img = np_file['PET']
-        lab_names = [i.decode for i in np_file['lab_names']]
+        lab_names = [i.decode for i in np_file['label_names']]
         vox_size = np.roll(np_file['spacing'], 1)
         clinical_staging = 'Missing!' if 'clinical_staging' not in np_file.keys() else np_file['clinical_staging'].tolist()
         if clinical_staging is None:
@@ -63,15 +64,6 @@ def wrap_array(in_arr, vox_size, xs=1, ys=1, zs=1, name='junk'):
     t_img.set_filename(name)
     return t_img
 
-
-def petct_base64(in_petct):
-    out_paths = {}
-    for c_img, c_file in zip([in_petct.ct_img, in_petct.pet_img,
-                              in_petct.label_img], ['ct', 'pet', 'lab']):
-        with NamedTemporaryFile(prefix=c_file, suffix='.nii.gz') as tfile:
-            nib.save(wrap_array(c_img, in_petct.vox_size, name=c_file), tfile.name)
-            out_paths[c_file] = base64.b64encode(open(tfile.name, 'rb').read()).decode("ascii")
-    return out_paths
 
 
 def fancy_format(in_str, **kwargs):
@@ -119,11 +111,4 @@ def write_papaya_html(out_file_path, out_blobs, title, clinical_staging_text):
                                     title=title))
 
 
-def web(one, out_file):
-    full_petct = parse(one)
-    web_petct = prepare_petct(full_petct, 0.65)
-    out_blobs = petct_base64(web_petct)
-    write_papaya_html(out_file, out_blobs,
-                      title=npz_info(in_npz),
-                      clinical_staging_text = web_petct.clinical_staging)
 

@@ -5,6 +5,7 @@ import os
 import logging
 from logging.handlers import TimedRotatingFileHandler
 
+
 def configure(app):
     """
     Setups up logging.
@@ -15,9 +16,11 @@ def configure(app):
     if not os.path.isdir(log_dir):
         os.makedirs(log_dir)
 
-    handler = TimedRotatingFileHandler(log_file, when='midnight', backupCount=10)
+    handler = TimedRotatingFileHandler(log_file, when='midnight', backupCount=9)
     handler.setLevel(logging.DEBUG)
 
     formatter = logging.Formatter(
         "%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+    handler.setFormatter(formatter)
+
     app.logger.addHandler(handler)
