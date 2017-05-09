@@ -1,6 +1,6 @@
-import os
 import logging
-import glob
+
+from pathlib import Path
 
 
 def read_nifti():
@@ -9,14 +9,8 @@ def read_nifti():
     file name.
     """
     logging.debug('reading in niftis')
-    image_files = os.path.join(os.getcwd(), 'lsreport', 'static', 'image_data',
-                               'nifti', '**', 'IMG*.nii.gz')
-    mask_files = os.path.join(os.getcwd(), 'lsreport', 'static', 'image_data',
-                              'nifti', '**', 'MASK*.nii.gz')
+    path = Path.cwd() / 'lsreport/static/image_data/nifti'
+    image_files = path.glob('**/IMG*.nii.gz')
+    mask_files = path.glob('**/MASK*.nii.gz')
 
-    return [(os.path.basename(i), os.path.basename(m))
-            for i, m in zip(glob.glob(image_files, recursive=True),
-                            glob.glob(mask_files, recursive=True))]
-
-
-
+    return [(i.name, m.name) for i, m in zip(image_files, mask_files)]
