@@ -6,6 +6,7 @@ import json
 import numpy as np
 import nibabel as nib
 
+from pathlib import Path
 from collections import namedtuple
 from scipy.ndimage import zoom, maximum_filter
 from tempfile import gettempdir, NamedTemporaryFile
@@ -14,10 +15,23 @@ from tempfile import gettempdir, NamedTemporaryFile
 import matplotlib.pyplot as plt
 
 apetct = namedtuple('AnnotatedPETCT', ['ct_img', 'pet_img', 'lab_img',
-                                       'lab_names', 'vox_size',
+                                       'label_names', 'vox_size',
                                        'clinical_staging'])
 
-def read():
+
+def read_json():
+    logging.debug('reading json summary')
+    path = Path.cwd() / 'lsreport/static/image_data/npz'
+    json_files = [j for j in path.glob('**/*.json')]
+    return [parse_json(i) for i in json_files]
+
+
+def parse_json(json_file):
+    with open(json_file) as f:
+        return json.load(f)
+
+
+def read_npz():
     logging.debug('reading in reports')
     npz_files = os.path.join(os.getcwd(), 'image_data', 'npz', '**', '*.npz')
     return [parse(npz) for npz in glob.glob(npz_files, recursive=True)]
@@ -30,13 +44,16 @@ def parse(npz_file):
         label_img = np_file['Labels']
         ct_img = np_file['CT']
         pet_img = np_file['PET']
-        lab_names = [i.decode for i in np_file['label_names']]
+        label_names = [i.decode for i in np_file['label_names']]
         vox_size = np.roll(np_file['spacing'], 1)
-        clinical_staging = 'Missing!' if 'clinical_staging' not in np_file.keys() else np_file['clinical_staging'].tolist()
+        clinical_staging = 'Missing!'\
+            if 'clinical_staging' not in np_file.keys()\
+            else np_file['clinical_staging'].tolist()
+
         if clinical_staging is None:
             clinical_staging = 'Missing!'
         return apetct(lab_img=label_img, ct_img=ct_img, pet_img=pet_img, \
-                      lab_names=lab_names, vox_size=vox_size,
+                      label_names=label_names, vox_size=vox_size,
                       clinical_staging=clinical_staging)
 
 
