@@ -1,5 +1,4 @@
 import os
-import base64
 import glob
 import logging
 import json
@@ -9,7 +8,6 @@ import nibabel as nib
 from pathlib import Path
 from collections import namedtuple
 from scipy.ndimage import zoom, maximum_filter
-from tempfile import gettempdir, NamedTemporaryFile
 
 
 import matplotlib.pyplot as plt
@@ -52,7 +50,7 @@ def parse(npz_file):
 
         if clinical_staging is None:
             clinical_staging = 'Missing!'
-        return apetct(lab_img=label_img, ct_img=ct_img, pet_img=pet_img, \
+        return apetct(lab_img=label_img, ct_img=ct_img, pet_img=pet_img,
                       label_names=label_names, vox_size=vox_size,
                       clinical_staging=clinical_staging)
 
