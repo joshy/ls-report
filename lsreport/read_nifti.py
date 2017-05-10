@@ -4,7 +4,7 @@ from pathlib import Path
 
 
 def read_nifti():
-    # type:() -> [(str, str)]
+    # type: () -> [(str, str)]
     """ Returns list of tuples, first is image file name, second is mask
     file name.
     """

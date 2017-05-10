@@ -1,9 +1,9 @@
 import logging
 
-from flask import render_template
+from flask import render_template, jsonify, request
 
 from lsreport.app import app, VERSION
-from lsreport.read_npz import read_json
+from lsreport.read_npz import read_json, read_npz
 from lsreport.read_nifti import read_nifti
 
 
@@ -21,8 +21,21 @@ def main():
                           )
 
 
-@app.route('/viewer')
-def viewer():
-    """ Renders medical image view. """
-    return render_template('viewer.html')
+@app.route('/nifti_viewer')
+def nifti_viewer():
+    """ Renders medical image view for nifti. """
+    return render_template('nifti_viewer.html')
 
+
+@app.route('/npz_viewer')
+def npz_viewer():
+    """ Renders medical image view for npz. """
+    return render_template('npz_viewer.html')
+
+
+@app.route('/image_data/<dir>')
+def npz(dir):
+    logging.debug('go dir %d', dir)
+    image_type = request.args.get('image_type', 'ct')
+    apect = read_npz(dir, image_type)
+    return jsonify(apect)
