@@ -8,49 +8,11 @@
   {% include 'partials/header.html' %}
   <div id="container" class="bt b--black-10 pa3 ph5-ns cf">
     <div class="fl w-70">
-      <div class="f5">
-        <p>LS Reports</p>
-      </div>
-
-      <table class="collapse ba br2 b--black-10 pv2 ph3">
-        <tbody>
-          <tr class="striped--light-gray ">
-            <th class="pv2 ph3 tl f6 fw6">Author</th>
-            <th class="tl f6 fw6 pv2 ph3">Labels</th>
-            <th class="tl f6 fw6 pv2 ph3">Image</th>
-          </tr>
-          {% for p in npz_jsons %}
-          <tr class="striped--light-gray ">
-            <td class="pv2 ph3">{{p.author_name}}</td>
-            <td class="pv2 ph3">
-              <ul class="list pl0 f6">
-              {% for l in p.label_ids %}
-                <li>{{l}}</li>
-              {% endfor %}
-              </ul>
-            </td>
-            <td class="pv2 ph3">
-              <a href="#">Open</a>
-            </td>
-          </tr>
-          {% endfor%}
-        </tbody>
-      </table>
+      {% include 'partials/list_npz.html' %}
     </div>
 
     <div class="fl w-30">
-      <div class="f5">
-        <p>Nifti Files</p>
-      </div>
-      <ul class="list pl0 f6">
-        {% for n in niftis%}
-          <li>
-            <a href='viewer?image={{n[0]}}&mask={{n[1]}}' target='_blank'>
-              {{n[0]}}
-            </a>
-          </li>
-        {% endfor %}
-      </ul>
+      {% include 'partials/list_nifti.html' %}
     </div>
   </div>
   {% assets "js_all" %}

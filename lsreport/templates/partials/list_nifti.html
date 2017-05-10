@@ -1,0 +1,10 @@
+<div class="f5">
+  <p>Nifti Files</p>
+</div>
+<ul class="list pl0 f6">
+  {% for n in niftis%}
+  <li>
+    <a href='viewer?image={{n[0]}}&mask={{n[1]}}' target='_blank'>{{n[0]}}</a>
+  </li>
+  {% endfor %}
+</ul>

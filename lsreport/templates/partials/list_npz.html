@@ -1,0 +1,28 @@
+<div class="f5">
+  <p>LS Reports</p>
+</div>
+
+<table class="collapse ba br2 b--black-10 pv2 ph3">
+  <tbody>
+    <tr class="striped--light-gray ">
+      <th class="pv2 ph3 tl f6 fw6">Author</th>
+      <th class="tl f6 fw6 pv2 ph3">Labels</th>
+      <th class="tl f6 fw6 pv2 ph3">Image</th>
+    </tr>
+    {% for p in npz_jsons %}
+    <tr class="striped--light-gray ">
+      <td class="pv2 ph3">{{p.author_name}}</td>
+      <td class="pv2 ph3">
+        <ul class="list pl0 f6">
+          {% for l in p.label_ids %}
+          <li>{{l}}</li>
+          {% endfor %}
+        </ul>
+      </td>
+      <td class="pv2 ph3">
+        <a href="#">Open</a>
+      </td>
+    </tr>
+    {% endfor%}
+  </tbody>
+</table>
