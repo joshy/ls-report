@@ -32,16 +32,20 @@ def image_data():
     """ Returns the image to the client. """
     acc_number = request.args.get('acc_number', '')
     if not acc_number:
-        return jsonify('Error: no accession number given, \
-                       use request param "acc_number"')
+        return 'Error: no accession number given,\
+               use request param "acc_number"'
 
     image_type = request.args.get('image_type', '')
-    if not image_type:
-        return jsonify('Error: no image type given, use request param \
-                       "image_type". Values are "ct", "pet" or "label"')
+    if not image_type or image_type not in ['ct', 'pet', 'label']:
+        return 'Error: No or wrong image type given (image_type="{}"),\
+               use request param "image_type". Valid values are\
+               "ct", "pet" or "label".'.format(image_type).replace('\n', '')
 
     image_path = image_request(acc_number, image_type)
-    return send_from_directory(image_path[0], image_path[1],
-                               attachment_filename=image_path[1],
-                               as_attachment=True,
-                               mimetype='application/nifti')
+    if image_path:
+        return send_from_directory(image_path[0], image_path[1],
+                                   attachment_filename=image_path[1],
+                                   as_attachment=True,
+                                   mimetype='application/nifti')
+    else:
+        return 'Nothing found for accession number="{}"'.format(acc_number)

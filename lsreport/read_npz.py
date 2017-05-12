@@ -39,10 +39,12 @@ def image_request(acc_number, image_type):
         return image_file.parents[0], image_file.name
     else:
         npz_file = _exists_npz(acc_number)
-        scan = _extract(npz_file)
-        dictionary = _petct_base64(npz_file.parents[0], scan)
-        print(dictionary)
-        return npz_file.parents[0], _image_file_name(image_type)
+        if npz_file:
+            scan = _extract(npz_file)
+            _petct_base64(npz_file.parents[0], scan)
+            return npz_file.parents[0], _image_file_name(image_type)
+        else:
+            return None
 
 
 def _exists_image_file(acc_number, image_type):
