@@ -6,22 +6,15 @@
   <tbody>
     <tr class="striped--light-gray ">
       <th class="pv2 ph3 tl f6 fw6">Author</th>
-      <th class="tl f6 fw6 pv2 ph3">Labels</th>
       <th class="tl f6 fw6 pv2 ph3">Image</th>
     </tr>
     {% for p in npz_jsons %}
     <tr class="striped--light-gray ">
-      <td class="pv2 ph3">{{p.author_name}}</td>
+      <td class="pv2 ph3">Lungstage</td>
       <td class="pv2 ph3">
-        <ul class="list pl0 f6">
-          {% for l in p.label_ids %}
-          <li>{{l}}</li>
-          {% endfor %}
-        </ul>
-      </td>
-      <td class="pv2 ph3">
-        <a href="npz_viewer?dir={{p.dir_name}}&image_type=ct">Open CT</a>
-        <a href="npz_viewer?dir={{p.dir_name}}&image_type=pet">Open PET</a>
+        <a href="image_data?acc_number={{p.acc_number}}&image_type=ct">Download CT</a>
+        <a href="image_data?acc_number={{p.acc_number}}&image_type=pet">Download PET</a>
+        <a href="image_data?acc_number={{p.acc_number}}&image_type=label">Download Labels</a>
       </td>
     </tr>
     {% endfor%}

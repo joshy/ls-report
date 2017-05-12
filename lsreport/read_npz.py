@@ -1,52 +1,102 @@
-import base64
-import os
-import glob
 import logging
 import json
+import re
+
 import numpy as np
 import nibabel as nib
 
+from collections import namedtuple
 from pathlib import Path
+from typing import Dict
 
+
+Scan = namedtuple('Scan', ['ct_image', 'pet_image', 'label_image', 'vox_size'])
+
+NPZ_PATH = Path.cwd() / 'lsreport/static/image_data/npz'
 
 
 def read_json():
     logging.debug('reading json summary')
-    path = Path.cwd() / 'lsreport/static/image_data/npz'
-    json_files = [j for j in path.glob('**/*.json')]
-    return [parse_json(i) for i in json_files]
+    json_files = [j for j in NPZ_PATH.glob('**/*.json')]
+    return [_parse_json(i) for i in json_files]
 
 
-def parse_json(json_file):
-    print(json_file)
-    print(type(json_file))
-    print(json_file.parents[0].name)
+def _parse_json(json_file):
     with open(json_file) as f:
         values = json.load(f)
-        values['dir_name'] = json_file.parents[0].name
+        values['acc_number'] = _parse_acc_number(json_file.parents[0].name)
         return values
 
 
-def read_npz(npz_file, image_type):
-    path = Path.cwd() / 'lsreport/static/image_data/npz/' / npz_file
-    return parse(list(path.glob('**/*.npz'))[0], image_type)
+def _parse_acc_number(dir_name):
+    matches = re.search('.*ACC(.*)$', dir_name)
+    return matches.group(1)
 
 
-def parse(npz_file, image_type):
-    print('parsing', npz_file)
+def image_request(acc_number, image_type):
+    image_file = _exists_image_file(acc_number, image_type)
+    if image_file:
+        return image_file.parents[0], image_file.name
+    else:
+        npz_file = _exists_npz(acc_number)
+        scan = _extract(npz_file)
+        dictionary = _petct_base64(npz_file.parents[0], scan)
+        print(dictionary)
+        return npz_file.parents[0], _image_file_name(image_type)
+
+
+def _exists_image_file(acc_number, image_type):
+    folder = '*' + acc_number + '/'
+    file_name = _image_file_name(image_type)
+    result = list(NPZ_PATH.glob(folder + file_name))
+    return result[0] if result else []
+
+
+def _image_file_name(image_type):
+    if image_type == 'ct':
+        return 'ct.nii.gz'
+    elif image_type == 'pet':
+        return 'pet.nii.gz'
+    elif image_type == 'label':
+        return 'label.nii.gz'
+
+
+def _exists_npz(acc_number):
+    folder = '*' + acc_number + '/'
+    file_name = 'lsa.npz'
+    result = list(NPZ_PATH.glob(folder + file_name))
+    return result[0] if result else []
+
+
+def _petct_base64(dir_name, in_petct):
+    # type: Scan -> Dict[str, str]
+    out_paths = {}
+    for c_img, c_file in zip([in_petct.ct_image, in_petct.pet_image, in_petct.label_image],
+                             ['ct', 'pet', 'label']):
+        f = c_file + '.nii.gz'
+        file_name = dir_name / (c_file + '.nii.gz')
+        with open(file_name, mode='w+') as tfile:
+            nib.save(_wrap_array(c_img, in_petct.vox_size, name=c_file), tfile.name)
+            out_paths[c_file] = tfile.name
+    return out_paths
+
+
+def _wrap_array(in_arr, vox_size, xs=1, ys=1, zs=1, name='junk'):
+    t_img = nib.Nifti1Image(in_arr, affine=np.eye(4))
+    n_vox_size = xs*vox_size[0], ys*vox_size[1], zs*vox_size[2]
+    t_img.header.set_zooms(n_vox_size)
+    t_img.header.set_xyzt_units('mm')
+    t_img.header['db_name'] = name
+    t_img.set_filename(name)
+    return t_img
+
+
+def _extract(npz_file):
+    # type: str -> Scan
     with np.load(npz_file) as np_file:
-        print(np_file.keys())
-        label_img = np_file['Labels']
-        ct_img = np_file['CT']
-        pet_img = np_file['PET']
-        label_names = [i.decode('utf-8') for i in np_file['label_names']]
-        vox_size = np.roll(np_file['spacing'], 1)
-        clinical_staging = 'Missing!'\
-            if 'clinical_staging' not in np_file.keys()\
-            else np_file['clinical_staging'].tolist()
-
-        if clinical_staging is None:
-            clinical_staging = 'Missing!'
-        return 'foo'
+        return Scan(ct_image=np_file['CT'],
+                    pet_image=np_file['PET'],
+                    label_image=np_file['Labels'],
+                    vox_size=np.roll(np_file['spacing'], 1))
 
 

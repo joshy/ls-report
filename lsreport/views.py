@@ -1,9 +1,9 @@
 import logging
 
-from flask import render_template, jsonify, request
+from flask import render_template, jsonify, request, send_from_directory
 
 from lsreport.app import app, VERSION
-from lsreport.read_npz import read_json, read_npz
+from lsreport.read_npz import read_json, image_request
 from lsreport.read_nifti import read_nifti
 
 
@@ -27,15 +27,21 @@ def nifti_viewer():
     return render_template('nifti_viewer.html')
 
 
-@app.route('/npz_viewer')
-def npz_viewer():
-    """ Renders medical image view for npz. """
-    return render_template('npz_viewer.html')
+@app.route('/image_data')
+def image_data():
+    """ Returns the image to the client. """
+    acc_number = request.args.get('acc_number', '')
+    if not acc_number:
+        return jsonify('Error: no accession number given, \
+                       use request param "acc_number"')
 
+    image_type = request.args.get('image_type', '')
+    if not image_type:
+        return jsonify('Error: no image type given, use request param \
+                       "image_type". Values are "ct", "pet" or "label"')
 
-@app.route('/image_data/<dir>')
-def npz(dir):
-    logging.debug('go dir %d', dir)
-    image_type = request.args.get('image_type', 'ct')
-    apect = read_npz(dir, image_type)
-    return jsonify(apect)
+    image_path = image_request(acc_number, image_type)
+    return send_from_directory(image_path[0], image_path[1],
+                               attachment_filename=image_path[1],
+                               as_attachment=True,
+                               mimetype='application/nifti')
