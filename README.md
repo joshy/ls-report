@@ -12,4 +12,5 @@ internally. It assumes the following
  * Under the `npz` folder there is a folder with the accession number encoded
    in it, e.g. like `aas_d12_ACC123456789` where `123456789` is the accession
    number. Important is ending with ACC{Number}
+ * Under the `npz` folder there is a json file
  * npz files are called `lsa.npz``

@@ -1,21 +1,18 @@
-import logging
 import json
+import logging
 import re
-
-import numpy as np
-import nibabel as nib
-
 from collections import namedtuple
 from pathlib import Path
-from typing import Dict
 
+import nibabel as nib
+import numpy as np
 
 Scan = namedtuple('Scan', ['ct_image', 'pet_image', 'label_image', 'vox_size'])
-
 NPZ_PATH = Path.cwd() / 'lsreport/static/image_data/npz'
 
 
 def read_json():
+    """ Reads the json summary file used for the index.html. """
     logging.debug('reading json summary')
     json_files = [j for j in NPZ_PATH.glob('**/*.json')]
     return [_parse_json(i) for i in json_files]
@@ -34,6 +31,9 @@ def _parse_acc_number(dir_name):
 
 
 def image_request(acc_number, image_type):
+    """ Returns a tuple with the folder and the file name of the requested
+    accession number. If nothing can be found Nothing will be returned.
+    """
     image_file = _exists_image_file(acc_number, image_type)
     if image_file:
         return image_file.parents[0], image_file.name
@@ -75,7 +75,6 @@ def _petct_base64(dir_name, in_petct):
     out_paths = {}
     for c_img, c_file in zip([in_petct.ct_image, in_petct.pet_image, in_petct.label_image],
                              ['ct', 'pet', 'label']):
-        f = c_file + '.nii.gz'
         file_name = dir_name / (c_file + '.nii.gz')
         with open(file_name, mode='w+') as tfile:
             nib.save(_wrap_array(c_img, in_petct.vox_size, name=c_file), tfile.name)
@@ -100,5 +99,4 @@ def _extract(npz_file):
                     pet_image=np_file['PET'],
                     label_image=np_file['Labels'],
                     vox_size=np.roll(np_file['spacing'], 1))
-
 

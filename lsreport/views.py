@@ -1,6 +1,6 @@
 import logging
 
-from flask import render_template, jsonify, request, send_from_directory
+from flask import render_template, request, send_from_directory
 
 from lsreport.app import app, VERSION
 from lsreport.read_npz import read_json, image_request
