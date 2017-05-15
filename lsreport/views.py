@@ -27,6 +27,12 @@ def nifti_viewer():
     return render_template('nifti_viewer.html')
 
 
+@app.route('/npz_viewer')
+def npz_viewer():
+    """ Renders npz data. """
+    return render_template('npz_viewer.html')
+
+
 @app.route('/image_data')
 def image_data():
     """ Returns the image to the client. """
@@ -45,7 +51,7 @@ def image_data():
     if image_path:
         return send_from_directory(image_path[0], image_path[1],
                                    attachment_filename=image_path[1],
-                                   as_attachment=True,
-                                   mimetype='application/nifti')
+                                   as_attachment=False,
+                                   mimetype='image/gznii')
     else:
         return 'Nothing found for accession number="{}"'.format(acc_number)

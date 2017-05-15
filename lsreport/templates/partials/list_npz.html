@@ -7,14 +7,25 @@
     <tr class="striped--light-gray ">
       <th class="pv2 ph3 tl f6 fw6">Author</th>
       <th class="tl f6 fw6 pv2 ph3">Image</th>
+      <th class="tl f6 fw6 pv2 ph3">View</th>
     </tr>
     {% for p in npz_jsons %}
     <tr class="striped--light-gray ">
       <td class="pv2 ph3">Lungstage</td>
       <td class="pv2 ph3">
-        <a href="image_data?acc_number={{p.acc_number}}&image_type=ct">Download CT</a>
-        <a href="image_data?acc_number={{p.acc_number}}&image_type=pet">Download PET</a>
-        <a href="image_data?acc_number={{p.acc_number}}&image_type=label">Download Labels</a>
+        <ul  class="list pl0">
+        <li>
+          <a href="image_data?acc_number={{p.acc_number}}&image_type=ct">Download CT</a>
+        </li>
+        <li>
+          <a href="image_data?acc_number={{p.acc_number}}&image_type=pet">Download PET</a>
+        </li>
+        <li>
+          <a href="image_data?acc_number={{p.acc_number}}&image_type=label">Download Labels</a>
+        </li>
+      </td>
+      <td>
+        <a href="npz_viewer?acc_number={{p.acc_number}}">Show</a>
       </td>
     </tr>
     {% endfor%}
